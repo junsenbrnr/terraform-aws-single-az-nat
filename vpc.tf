@@ -9,20 +9,20 @@ provider "aws" {
 
 # create the vpc
 resource "aws_vpc" "vpc" {
-  tags {
-    Name = "terraform_vpc_test"
-  }
+    tags {
+        Name = "terraform_vpc_test"
+    }
 
-  cidr_block = "${var.vpc_cidr}"
-  enable_dns_support = true
-  enable_dns_hostnames = true
+    cidr_block = "${var.vpc_cidr}"
+    enable_dns_support = true
+    enable_dns_hostnames = true
 }
 
 # create the igw
 resource "aws_internet_gateway" "igw" {
-  tags {
-    Name = "igw_vpc_test"
-  }
+    tags {
+        Name = "igw_vpc_test"
+    }
 
-  vpc_id = "${aws_vpc.vpc.id}"
+    vpc_id = "${aws_vpc.vpc.id}"
 }
