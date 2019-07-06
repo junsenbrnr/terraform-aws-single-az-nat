@@ -1,0 +1,20 @@
+# default is $HOME/.aws/credentials
+# shared_credentials_file = ""
+
+# default is default
+# profile = ""
+
+# vpc_name            = ""
+# vpc_cidr            = ""
+# az                  = ""
+# subnet_bastion_cidr = ""
+# subnet_public_cidr  = ""
+# subnet_private_cidr = ""
+# subnet_nat_cidr     = ""
+# instance_type       = ""
+# base_ami_id         = ""
+# nat_ami_id          = ""
+
+# uncomment these variables and set them
+# known_cidrs         = []
+# key_name            = ""

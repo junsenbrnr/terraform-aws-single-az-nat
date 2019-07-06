@@ -6,7 +6,7 @@
 
 ## Up and running
 ### What is this doing?
-The code in this repository is building a LAMP stack in a single AZ VPC within AWS. A total of four instances are being created within their corresponding subnets:
+The code in this repository is building a LAMP stack in a single AZ within AWS. A total of four instances are being created within their corresponding subnets:
 
 * bastion - you can only SSH into the other instance from here
 * nat - routes traffic from the private subnet to the outside world
@@ -21,13 +21,13 @@ Create an AWS account if you haven't already done so. Once your account has been
 Install [Terraform](https://www.terraform.io/downloads.html) if you haven't already done so. 
 
 ### Code
-With your AWS account created and the CLI along with Terraform installed, download or clone this repository.
+Download or clone this repository.
 
-##### vars.tf
-There are several default variables set in `vars.tf` such as `region`, `vpc_name`, etc. If you're eligible for AWS' "free tier", leave `instance_type` set to `t2.micro` as you won't be charged<sup>1</sup>. Feel free to change the others on your location and personal preferences. The default values set for the following variables must be replace:
+##### vars.tf and terraform.tfvars
+Copy `terraform.tfvars.example` to `terraform.tfvars`. There are several default variables set in `vars.tf` such as `region`, `vpc_name`, etc. If you're eligible for AWS' "free tier", leave `instance_type` commented out as you won't be charged<sup>*</sup>. Feel free to change the others based on your location and personal preferences. The default values set for the following variables must be replaced:
 
-* `known_cidrs` - use your CIDR
-* `bastion_key_name`, `public_key_name`, `nat_key_name` and `private_key_name` - use your own [key](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html#having-ec2-create-your-key-pair)<sup>2</sup> and add them to the [ssh-agent](https://aws.amazon.com/blogs/security/securely-connect-to-linux-instances-running-in-a-private-amazon-vpc/)
+* `known_cidrs` - use your CIDR otherwise SSH is open to the world
+* `key_name` - use your own [key](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html#having-ec2-create-your-key-pair) and add them to the [ssh-agent](https://aws.amazon.com/blogs/security/securely-connect-to-linux-instances-running-in-a-private-amazon-vpc/)
 
 Once the necessary variables have been replaced, it's time to build.
 
@@ -39,11 +39,10 @@ Run: `terraform plan -out=[NAME-YOUR-PLAN]` to generate the plan that Terraform 
 Run: `terraform apply "[NAME-YOUR-PLAN]"` to build out your infrastructure
 > If you supply the [NAME-YOUR-PLAN], Terraform will not prompt you `Do you want to perform these actions?`
 
-Now that the infrastructure has been built, let's get the public instance talking to the private instance and vice versa. From within the AWS Console, find the following:
-
-* public IP of the bastion instance
-* public and private IP of the public instance
-* private IP of the private instance
+With everything built, in terminal you should see outputs of the bastion, public and private instances. Find:
+* the public IP of the bastion instance
+* the public and private IP of the public instance
+* the private IP of the private instance
 
 SSH into the bastion instance using its public IP and then SSH into the private instance. Run through the `mysql_secure_installation` process and create a database granting access to a user of your choice along with its password to the private IP of the public instance.
 
@@ -69,13 +68,11 @@ print "Success!";
 
 mysqli_close($link);
 ```
-If everything worked, going to the public instance's public IP in your browser would yield "Success!". Now, tear everything down because if you leave this up and running and forget about it you'll eventually get charged by AWS. You've been warned.
+If everything worked going to the public instance's public IP in your browser would yield "Success!". Now, tear everything down because if you leave this up and running and forget about it you'll eventually get charged by AWS. You've been warned.
 
 Run: `terraform destroy` and type in `yes` at the `Do you really want to destroy all resources?` prompt.
 
 ### Closing remarks
 There's a lot of stuff going on under the hood with security groups, route tables, etc. For the sake of "simplicity", all of this information has been left out.
 
-<sup>1</sup> - There are limits to AWS' [Free Tier](https://aws.amazon.com/free/).
-
-<sup>2</sup> - A single key *could* be used to connect to all the instances. Feel free to to use the same key name for all the instances.
+<sup>*</sup> There are limits to AWS' [Free Tier](https://aws.amazon.com/free/).
